@@ -490,3 +490,24 @@ npm run sanity:dev
 
 - Studio runs at `http://localhost:3333`
 - Create `author`, `category`, and `post` documents in Studio.
+
+## Form handling with Resend
+
+The web app includes three forms with server-side submission via Next.js Route Handlers:
+
+- `POST /api/contact` for `/contact`
+- `POST /api/get-delivery` for `/get-delivery`
+- `POST /api/newsletter` for the footer newsletter form
+
+Each endpoint uses:
+- Zod validation
+- Honeypot spam field (`website`)
+- In-memory IP-based rate limiting
+
+Add these variables to `.env.local`:
+
+```bash
+RESEND_API_KEY=your_resend_api_key
+FORM_TO_EMAIL=team@yourdomain.com
+FORM_FROM_EMAIL="Wingxtra <no-reply@yourdomain.com>"
+```
