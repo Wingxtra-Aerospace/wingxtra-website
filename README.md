@@ -1,263 +1,450 @@
-# wingxtra-website
-Wingxtra Official Website
+# Wingxtra Official Website (Next.js + Sanity + Resend + Netlify)
 
-Next.js + Sanity + Netlify
+This repository is the source of truth for the Wingxtra official website (**wingxtra.com**).
 
-This repository contains the official Wingxtra website (wingxtra.com) rebuilt from Webflow into a fully owned, modern web stack.
+Goal: Rebuild the current Webflow site **page-for-page** and deploy on **Netlify**, with:
+- **Next.js (App Router)** for the site
+- **Sanity** for blog/news content (replaces Webflow CMS)
+- **Resend** for form emails (Contact, Newsletter, Get Delivery)
 
-It replaces the previous Webflow site and provides:
+## Reference pages (must match 1:1)
 
-Full code ownership
+These pages are the canonical design + copy source:
+- Home: https://wingxtra.webflow.io/
+- Solutions: https://wingxtra.webflow.io/solutions
+- Technology: https://wingxtra.webflow.io/technology
+- About: https://wingxtra.webflow.io/about-us
+- Contact: https://wingxtra.webflow.io/contact
+- Blog list (Webflow CMS): https://wingxtra.webflow.io/cms/blog
+- Get Delivery: https://wingxtra.webflow.io/get-delivery
 
-CMS-driven blog/news
+> NOTE: In our rebuild, Webflow `/cms/blog` becomes `/news` and `/news/[slug]`.
 
-Secure form handling
+---
 
-Predictable hosting costs
+## Tech stack
 
-Easy future integration with Wingxtra Cloud, Fleet APIs, and Delivery services
+- Next.js (latest stable) + TypeScript + Tailwind
+- Sanity Studio v4 (in-repo under `/sanity`)
+- Resend (email provider for forms)
+- Netlify hosting (supports major Next.js features via OpenNext adapter) :contentReference[oaicite:0]{index=0}
 
-🔧 Tech Stack
-Frontend
+---
 
-Next.js (App Router) – React framework
+## Repo structure (target)
 
-TypeScript
 
-Tailwind CSS
-
-CMS
-
-Sanity – for News / Blog content
-
-Forms & Email
-
-Next.js Route Handlers
-
-Resend – email delivery
-
-Hosting
-
-Netlify – production hosting & CI/CD
-
-GitHub – source of truth
-
-🌐 Domains
-Service	Domain	Hosting
-Official website	wingxtra.com	Netlify
-(future) Cloud GCS UI	gcs.wingxtra.com	Netlify
-APIs	api.wingxtra.com, fleet.wingxtra.com	Render / backend hosts
-
-⚠️ This repo only hosts the official website (wingxtra.com).
-
-📁 Repository Structure
-wingxtra-website/
-├─ app/                    # Next.js App Router pages
-│  ├─ api/                 # Form endpoints (contact, newsletter, get-delivery)
-│  ├─ news/                # Blog list + blog detail pages
-│  ├─ solutions/
-│  ├─ technology/
-│  ├─ about-us/
-│  ├─ contact/
-│  ├─ get-delivery/
-│  └─ layout.tsx
-│
-├─ components/             # Reusable UI components
-├─ lib/                    # Utilities (Sanity client, helpers)
-├─ public/                 # Static assets (images, icons)
-├─ sanity/                 # Sanity Studio + schemas
-├─ netlify.toml            # Netlify configuration
+.
+├─ app/ # Next.js App Router pages
+├─ components/ # Reusable UI components
+├─ lib/ # Sanity client, utilities, validation, etc.
+├─ public/ # Static assets
+├─ sanity/ # Sanity Studio + schemas
+├─ netlify.toml # Netlify build configuration
 ├─ package.json
 └─ README.md
-🚀 Getting Started (Local Development)
-1. Clone the repository
-git clone https://github.com/Wingxtra-Aerospace/wingxtra-website.git
-cd wingxtra-website
-2. Install dependencies
-npm install
-3. Create environment variables
 
-Create a file called .env.local in the root:
 
-# Sanity
-NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
+---
+
+## Prerequisites
+
+- Node.js **20+** (required for Sanity Studio v4) :contentReference[oaicite:1]{index=1}
+- Git + GitHub access
+- Netlify account
+- Sanity account/project
+- Resend account + API key (and ideally a verified sending domain) :contentReference[oaicite:2]{index=2}
+
+---
+
+# ✅ Recommended workflow: Upstream-first (Codex works directly in GitHub)
+
+This is the fastest + cleanest approach:
+- GitHub repo is the source of truth
+- Codex opens PRs
+- Netlify auto-builds PR previews and deploys main
+
+### 1) Create the repo
+Create GitHub repo: `wingxtra-website`
+
+### 2) Connect Netlify to the repo
+Netlify → **Add new site → Import from Git → GitHub → wingxtra-website**
+
+Do not worry about build settings yet (we’ll set them after scaffold).
+
+---
+
+# Codex Runbook (PR-by-PR prompts)
+
+## Rules for Codex
+- Work in **small PRs** (one PR per prompt below).
+- Always keep routes stable: do not rename pages without updating links.
+- Always keep copy + section order consistent with Webflow reference pages.
+- Prefer reusable components to duplication.
+- No “placeholder lorem ipsum” except where explicitly allowed.
+- Every PR must include:
+  - working routes
+  - responsive layout
+  - no runtime errors in console
+
+---
+
+## PR-1 — Scaffold Next.js + Tailwind + routes
+
+**Codex prompt (copy/paste):**
+
+Create a Next.js (latest stable) project using App Router + TypeScript + Tailwind in this repo.
+
+Requirements:
+
+App Router structure in /app
+
+Shared layout with <Header/> and <Footer/>
+
+Routes/pages:
+/ (home)
+/solutions
+/technology
+/about-us
+/contact
+/news
+/news/[slug]
+/get-delivery
+
+Add a small design system:
+
+container widths, typography scale, buttons, section spacing, responsive grids
+
+Put placeholder headings only (no filler text) and ensure each page renders.
+Open a PR.
+
+
+Acceptance checklist:
+- all routes load
+- navigation links work
+- mobile nav works
+
+---
+
+## PR-2 — Home page (match Webflow structure + copy)
+
+**Codex prompt:**
+
+Rebuild the Home page to match https://wingxtra.webflow.io/
+ as closely as possible (structure + copy + section order).
+
+Must include:
+
+Hero headline and subcopy
+
+"What you need, when you need it. Without the wait." section
+
+Solutions section with tabs/cards: Restaurants, Convenience & Grocery, Healthcare
+
+"It’s simpler than you imagine" section with 4 steps (01-04) and matching copy
+
+Benefits section with 4 cards: Fast, Convenient, Eco friendly, Accessibility & Reach
+
+News preview section (use temporary placeholder posts for now)
+
+CTA blocks + footer consistent with site
+Open PR.
+
+
+---
+
+## PR-3 — Solutions page (match Webflow)
+
+**Codex prompt:**
+
+Rebuild /solutions to match https://wingxtra.webflow.io/solutions
+ as closely as possible.
+
+Must include:
+
+Hero heading + subheading
+
+Benefit cards (3) with their copy
+
+"Easy to use..." integration line
+
+Vertical sections: Restaurants, Convenience & Grocery, Healthcare
+
+Impact blocks including the "<20 mins" and "3 min 43 sec..." content
+Open PR.
+
+
+---
+
+## PR-4 — Technology page (match Webflow)
+
+**Codex prompt:**
+
+Rebuild /technology to match https://wingxtra.webflow.io/technology
+ as closely as possible.
+
+Must include:
+
+Specifications grid (speed, carrying capacity, range, altitude)
+
+"Meet your delivery guy" section + copy
+
+"Order experience" timeline with timestamps and matching text
+
+Remote Operations + Operational Intelligence sections
+
+FAQ section "You might be wondering." with the page questions/answers
+Open PR.
+
+
+---
+
+## PR-5 — About page (match Webflow)
+
+**Codex prompt:**
+
+Rebuild /about-us to match https://wingxtra.webflow.io/about-us
+ as closely as possible.
+
+Must include:
+
+H1 headline and the intro paragraph
+
+Our mission section + copy
+
+Our vision section + copy
+
+Our values section + layout
+Open PR.
+
+
+---
+
+## PR-6 — Contact page + footer newsletter UI (no backend yet)
+
+**Codex prompt:**
+
+Rebuild /contact to match https://wingxtra.webflow.io/contact
+.
+
+Must include:
+
+Headline + support copy
+
+Contact support form UI with fields: name, email, message
+
+Footer sections and Newsletter form UI
+
+Success/error UI states (wired later)
+Open PR.
+
+
+---
+
+## PR-7 — Get Delivery page (match Webflow)
+
+**Codex prompt:**
+
+Rebuild /get-delivery to match https://wingxtra.webflow.io/get-delivery
+.
+
+Must include:
+
+Hero + fastest delivery time badge and copy
+
+"Drone delivery zones" with Kumasi, Accra, Nkawkaw
+
+"How it works" steps and the partner references on the page
+
+CTA block
+
+FAQ section with the page questions/answers
+Open PR.
+
+
+---
+
+# Sanity (Blog/News CMS)
+
+We replace Webflow `/cms/blog` with:
+- `/news` (list)
+- `/news/[slug]` (detail)
+
+## PR-8 — Add Sanity Studio + schemas + Next.js fetch
+
+**Codex prompt:**
+
+Add Sanity Studio in this repo under /sanity and connect it to the Next.js app.
+
+Requirements:
+
+Schemas: post, author, category
+post fields: title, slug, excerpt, coverImage, publishedAt, author ref, categories, body (portable text), seo fields
+
+Add Sanity client utilities in /lib/sanity/*
+
+Implement /news page listing latest posts
+
+Implement /news/[slug] rendering post
+
+Add ISR revalidation (60 seconds) for /news and /news/[slug]
+
+Add README docs: how to run studio and app locally
+Open PR.
+
+
+### Sanity environment variables
+Create `.env.local` (not committed):
+
+
+NEXT_PUBLIC_SANITY_PROJECT_ID=xxxx
 NEXT_PUBLIC_SANITY_DATASET=production
 NEXT_PUBLIC_SANITY_API_VERSION=2025-01-01
 
-# Resend (Forms)
-RESEND_API_KEY=your_resend_key
-RESEND_FROM_EMAIL=website@wingxtra.com
+Optional (only if needed for drafts/private reads):
+
+SANITY_API_READ_TOKEN=xxxx
+
+
+Sanity Studio setup uses the Sanity CLI workflow (Node 20+). :contentReference[oaicite:3]{index=3}
+
+---
+
+# Forms (Resend)
+
+We will send form submissions via Resend:
+- Contact form: `/contact`
+- Newsletter form: footer on all pages
+- Optional: Get Delivery form (if there is a form on the page)
+
+Resend Node SDK guide: :contentReference[oaicite:4]{index=4}
+
+## PR-9 — Implement Resend + API routes + validation + anti-spam
+
+**Codex prompt:**
+
+Implement email sending with Resend for forms.
+
+Requirements:
+
+Add deps: resend, zod
+
+Create POST endpoints:
+/app/api/contact/route.ts
+/app/api/newsletter/route.ts
+/app/api/get-delivery/route.ts
+
+Validate payloads with zod
+
+Add honeypot field and basic rate limiting (simple per-IP in-memory ok initially)
+
+Send email via Resend to RESEND_TO_EMAIL using RESEND_FROM_EMAIL
+
+Wire forms to call these endpoints and show loading + success/error states
+Open PR.
+
+
+### Resend environment variables
+Set in `.env.local` and Netlify:
+
+
+RESEND_API_KEY=xxxx
+RESEND_FROM_EMAIL="Wingxtra Website website@wingxtra.com
+"
 RESEND_TO_EMAIL=info@wingxtra.com
 
-⚠️ Never commit .env.local
 
-4. Run the website
+---
+
+# Netlify Deployment
+
+Netlify supports Next.js features via OpenNext adapter. :contentReference[oaicite:5]{index=5}
+
+## PR-10 — Add Netlify config + deployment docs
+
+**Codex prompt:**
+
+Add netlify.toml and README deployment instructions.
+
+Requirements:
+
+Netlify build command: npm run build
+
+Include @netlify/plugin-nextjs in netlify.toml
+
+Document all required environment variables (Sanity + Resend)
+
+Add caching headers for Next static assets
+Open PR.
+
+
+Example `netlify.toml` (Codex should create it, but this is the target idea):
+
+[build]
+command = "npm run build"
+
+[[plugins]]
+package = "@netlify/plugin-nextjs"
+
+
+---
+
+# Local development
+
+## Install
+
+npm install
+
+
+## Run Next.js app
+
 npm run dev
 
-Open:
-👉 http://localhost:3000
 
-📰 Sanity CMS (Blog / News)
-What Sanity is used for
+## Run Sanity Studio
+From repo root:
 
-News
-
-Blog posts
-
-Articles published on /news
-
-Start Sanity Studio locally
 cd sanity
 npm install
 npm run dev
 
-Open:
-👉 http://localhost:3333
 
-Content Types
+---
 
-post
+# Definition of Done (“100% rebuild”)
 
-author
+The rebuild is considered complete when:
+- All pages match the Webflow reference pages in:
+  - section order
+  - headings and copy
+  - visible CTAs and navigation
+- `/news` and `/news/[slug]` are driven by Sanity content
+- Forms send emails successfully via Resend
+- Site deploys on Netlify and works on production domain (wingxtra.com)
+- Lighthouse is reasonable (no major layout shifts; images optimized)
 
-category
+---
 
-When a post is published:
+# Troubleshooting
 
-It appears on /news
+## Netlify build issues
+- Ensure Node version in Netlify matches project needs (Node 20+ is safest).
+- Ensure `@netlify/plugin-nextjs` is enabled via `netlify.toml`.
+- Confirm env vars are set in Netlify UI.
 
-It is statically regenerated automatically (ISR)
+## Resend email not sending
+- Confirm domain/sender verification in Resend (From address must be valid/verified).
+- Confirm RESEND_API_KEY is present in Netlify env vars.
 
-✉️ Forms & Email (Resend)
+## Sanity content not appearing
+- Confirm project id/dataset/version env vars match the Sanity project.
+- Confirm posts are published and have slugs.
 
-Forms implemented:
+---
 
-Contact (/contact)
-
-Get Delivery (/get-delivery)
-
-Newsletter (footer)
-
-How it works
-
-Form submits to a Next.js API route
-
-Input is validated with Zod
-
-Spam protection (honeypot + basic rate limiting)
-
-Email sent via Resend
-
-User sees success/error message
-
-API Routes
-POST /api/contact
-POST /api/get-delivery
-POST /api/newsletter
-
-No Netlify Forms are used (avoids metered limits).
-
-🌍 Netlify Deployment
-Initial setup
-
-Netlify → Add new site
-
-Import from GitHub
-
-Select wingxtra-website
-
-Build settings
-
-Build command: npm run build
-
-Publish directory: handled automatically by Netlify (Next.js)
-
-Environment variables (Netlify UI)
-
-Add all variables from .env.local into:
-
-Site settings → Environment variables
-Custom domain
-
-Add:
-
-wingxtra.com
-
-www.wingxtra.com
-
-Netlify will provide DNS records to add at your domain registrar.
-
-🔁 CI/CD Workflow
-
-main branch = production
-
-Every push triggers:
-
-Build
-
-Preview deploy
-
-Production deploy (if main)
-
-Recommended workflow:
-
-git checkout -b feature/update-copy
-git commit -m "Update homepage copy"
-git push origin feature/update-copy
-
-→ Open PR → Preview → Merge
-
-🔐 Security Notes
-
-HTTPS enforced by Netlify
-
-No server-side secrets exposed to the client
-
-Strict CORS handled on backend APIs (not in this repo)
-
-Forms protected against basic spam
-
-🧭 SEO & Performance
-
-Page-level metadata via Next.js
-
-next/image used everywhere
-
-Static rendering + ISR for speed
-
-Lighthouse-friendly by default
-
-🧱 Why This Architecture
-
-This setup ensures:
-
-No vendor lock-in (unlike Webflow)
-
-Clean separation of concerns
-
-Easy future integration with:
-
-Wingxtra Cloud GCS
-
-Fleet APIs
-
-Delivery dashboards
-
-Predictable hosting cost
-
-🔮 Future Enhancements (Optional)
-
-Add Careers CMS collection
-
-Add Investor / Media pages
-
-Add Analytics (Plausible / GA)
-
-Add Cloudflare WAF in front of Netlify
-
-Migrate hosting to Vercel if app complexity increases
-
-🧑‍💻 Maintainers
-
-Wingxtra Aerospace
-Engineering & Product Team
+# Optional improvements (post-launch)
+- Add Sanity preview mode
+- Add a webhook from Sanity → Netlify deploy hook (instant updates)
+- Add basic analytics
+- Add sitemap.xml + robots.txt
+- Add OpenGraph images per page
