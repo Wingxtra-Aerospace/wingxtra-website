@@ -448,3 +448,66 @@ The rebuild is considered complete when:
 - Add basic analytics
 - Add sitemap.xml + robots.txt
 - Add OpenGraph images per page
+
+## Local development (web app + Sanity Studio)
+
+### 1) Install dependencies
+
+```bash
+npm install
+```
+
+### 2) Configure environment variables
+
+Create `.env.local` in the project root:
+
+```bash
+NEXT_PUBLIC_SANITY_PROJECT_ID=yourProjectId
+NEXT_PUBLIC_SANITY_DATASET=production
+NEXT_PUBLIC_SANITY_API_VERSION=2025-01-01
+SANITY_STUDIO_PROJECT_ID=yourProjectId
+SANITY_STUDIO_DATASET=production
+```
+
+### 3) Run the Next.js web app
+
+```bash
+npm run dev
+```
+
+- Web app runs at `http://localhost:3000`
+- News list route: `http://localhost:3000/news`
+- News detail route: `http://localhost:3000/news/[slug]`
+- News pages use ISR with a 60-second revalidation window.
+
+### 4) Run Sanity Studio
+
+In a second terminal:
+
+```bash
+npm run sanity:dev
+```
+
+- Studio runs at `http://localhost:3333`
+- Create `author`, `category`, and `post` documents in Studio.
+
+## Form handling with Resend
+
+The web app includes three forms with server-side submission via Next.js Route Handlers:
+
+- `POST /api/contact` for `/contact`
+- `POST /api/get-delivery` for `/get-delivery`
+- `POST /api/newsletter` for the footer newsletter form
+
+Each endpoint uses:
+- Zod validation
+- Honeypot spam field (`website`)
+- In-memory IP-based rate limiting
+
+Add these variables to `.env.local`:
+
+```bash
+RESEND_API_KEY=your_resend_api_key
+FORM_TO_EMAIL=team@yourdomain.com
+FORM_FROM_EMAIL="Wingxtra <no-reply@yourdomain.com>"
+```
